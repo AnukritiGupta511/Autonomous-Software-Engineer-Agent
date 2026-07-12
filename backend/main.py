@@ -29,7 +29,13 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-app.include_router(chat_router)
+from fastapi.staticfiles import StaticFiles
+import os
+from pathlib import Path
+# Serve built React/Vite frontend
+frontend_path = Path(__file__).parent.parent / "frontend" / "dist"
+if frontend_path.is_dir():
+    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
 
 @app.get("/health", tags=["Health"])
 async def health_check():
