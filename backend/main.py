@@ -22,20 +22,19 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://autonomous-software-engineer-agent.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(auth_router)
-from fastapi.staticfiles import StaticFiles
-import os
-from pathlib import Path
-# Serve built React/Vite frontend
-frontend_path = Path(__file__).parent.parent / "frontend" / "dist"
-if frontend_path.is_dir():
-    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
+app.include_router(chat_router)
 
 @app.get("/health", tags=["Health"])
 async def health_check():
